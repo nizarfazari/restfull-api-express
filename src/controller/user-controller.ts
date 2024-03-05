@@ -1,5 +1,5 @@
 import {Response, Request, NextFunction} from "express";
-import {CreateUserRequest, LoginUserRequest} from "../dto/user-model";
+import {CreateUserRequest, LoginUserRequest, UpdateUserRequest} from "../dto/user-model";
 import {UserService} from "../service/user-service";
 import {UserRequest} from "../middleware/auht.middleware";
 
@@ -38,5 +38,19 @@ export class UserController {
             next(e)
         }
     }
+
+    static async update(req: UserRequest, res: Response, next: NextFunction) {
+        try {
+            const request:UpdateUserRequest = req.body as UpdateUserRequest
+            const response = await UserService.update(req.user!, request);
+            res.status(200).json({
+                data: response
+            })
+        } catch (e) {
+            next(e)
+        }
+    }
+
+
 
 }
