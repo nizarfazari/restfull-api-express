@@ -150,3 +150,36 @@ describe('PATCH /api/users/update', () => {
         expect(await bcrypt.compare("benar", user.password)).toBe(true)
     });
 });
+
+
+describe('DELETE /api/users', () => {
+    beforeEach(async () => {
+        await UserTest.create()
+    })
+
+    afterEach(async () => {
+        await UserTest.delete()
+    })
+    it('should be able logout',async () => {
+        const response = await supertest(app)
+            .delete("/api/users")
+            .set("X-API-TOKEN", "test")
+
+        logger.debug(response.body)
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBe("OK")
+        const user = await UserTest.get();
+        expect(user.token).toBe(null)
+    });
+
+    it('should reject update user if token is wrong', async () => {
+        const response = await supertest(app)
+            .delete("/api/users")
+            .set("X-API-TOKEN", "salah")
+
+
+        logger.debug(response.body)
+        expect(response.status).toBe(401)
+        expect(response.body.errors).toBeDefined()
+    });
+});
