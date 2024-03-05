@@ -77,3 +77,23 @@ describe('POST /api/users/login', () => {
     });
 });
 
+
+describe('GET /api/users/current', () => {
+    beforeEach(async () => {
+        await UserTest.create()
+    })
+
+    afterEach(async () => {
+        await UserTest.delete()
+    })
+
+    it('should be able to get user', async () => {
+        const response = await supertest(app).get("/api/users/me")
+            .set("X-API-TOKEN", "test")
+
+        logger.debug(response.body)
+        expect(response.status).toBe(200)
+        expect(response.body.data.username).toBe("test")
+        expect(response.body.data.name).toBe("test")
+    });
+});

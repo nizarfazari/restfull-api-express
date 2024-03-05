@@ -1,6 +1,7 @@
 import {Response, Request, NextFunction} from "express";
 import {CreateUserRequest, LoginUserRequest} from "../dto/user-model";
 import {UserService} from "../service/user-service";
+import {UserRequest} from "../middleware/auht.middleware";
 
 export class UserController {
     static async register(req: Request, res: Response, next: NextFunction) {
@@ -14,6 +15,7 @@ export class UserController {
             next(e)
         }
     }
+
     static async login(req: Request, res: Response, next: NextFunction) {
         try {
             const request: LoginUserRequest = req.body as LoginUserRequest
@@ -25,4 +27,16 @@ export class UserController {
             next(e)
         }
     }
+
+    static async get(req: UserRequest, res: Response, next: NextFunction) {
+        try {
+            const response = await UserService.get(req.user!);
+            res.status(200).json({
+                data: response
+            })
+        } catch (e) {
+            next(e)
+        }
+    }
+
 }
